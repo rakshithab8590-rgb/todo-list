@@ -10,8 +10,11 @@ app = Flask(__name__)
 def get_db():
     database_url = os.environ.get("DATABASE_URL")
 
-    # Railway sometimes gives postgres:// instead of postgresql://
-    if database_url and database_url.startswith("postgres://"):
+    if not database_url:
+        raise Exception("DATABASE_URL not found")
+
+    # Railway sometimes uses postgres:// instead of postgresql://
+    if database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
 
     conn = psycopg2.connect(
@@ -19,8 +22,8 @@ def get_db():
         cursor_factory=RealDictCursor,
         sslmode="require"
     )
-    return conn
 
+    return conn
 
 # ─── CREATE TABLE IF NOT EXISTS ───────────────────────────────────
 def init_db():
