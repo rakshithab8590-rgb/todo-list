@@ -10,9 +10,6 @@ app = Flask(__name__)
 def get_db():
     database_url = os.environ.get("DATABASE_URL")
 
-    if not database_url:
-        raise Exception("DATABASE_URL not found")
-
     # Railway sometimes uses postgres:// instead of postgresql://
     if database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
