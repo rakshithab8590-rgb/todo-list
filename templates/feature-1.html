@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TaskFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;600;700&family=Cabinet+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #F5F2EC;
+      --card:     #FFFFFF;
+      --ink:      #1A1A18;
+      --muted:    #8A8880;
+      --border:   #E2DDD5;
+      --accent:   #2D6A4F;
+      --accent2:  #52B788;
+      --danger:   #C44B2E;
+      --done-bg:  #F0F7F4;
+      --done-txt: #52B788;
+      --shadow:   0 2px 12px rgba(0,0,0,0.07);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Cabinet Grotesk', sans-serif;
+      min-height: 100vh;
+      padding: 48px 20px 80px;
+    }
+
+    /* ── HEADER ── */
+    header {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      animation: fadeDown 0.5s ease;
+    }
+
+    .brand {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-dot {
+      width: 10px; height: 10px;
+      background: var(--accent2);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .stat-pill strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    /* ── ADD FORM ── */
+    .add-form {
+      max-width: 600px;
+      margin: 0 auto 28px;
+      display: flex;
+      gap: 10px;
+      animation: fadeUp 0.5s ease 0.1s both;
+    }
+
+    .add-form input {
+      flex: 1;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      color: var(--ink);
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow);
+    }
+
+    .add-form input::placeholder { color: #B5B0A8; }
+    .add-form input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(45,106,79,0.1);
+    }
+
+    .add-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-family: 'Clash Display', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: var(--shadow);
+      white-space: nowrap;
+    }
+
+    .add-btn:hover { background: #245A42; }
+    .add-btn:active { transform: scale(0.97); }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      max-width: 600px;
+      margin: 0 auto 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: fadeUp 0.5s ease 0.15s both;
+    }
+
+    .section-label {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .clear-btn {
+      font-family: 'Cabinet Grotesk', sans-serif;
+      font-size: 0.82rem;
+      color: var(--danger);
+      background: none;
+      border: 1px solid #F0C5BB;
+      border-radius: 8px;
+      padding: 5px 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+      font-weight: 500;
+    }
+    .clear-btn:hover { background: #FDF0EC; }
+
+    /* ── TODO LIST ── */
+    .todo-list {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .todo-item {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      animation: fadeUp 0.35s ease both;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: var(--shadow);
+    }
+
+    .todo-item:hover {
+      border-color: #C8C3BB;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.09);
+    }
+
+    .todo-item.done {
+      background: var(--done-bg);
+      border-color: #C8E6D8;
+    }
+
+    .todo-item.done .task-text {
+      text-decoration: line-through;
+      color: var(--done-txt);
+    }
+
+    /* Circle checkbox */
+    .toggle-link {
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+
+    .check-circle {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .todo-item.done .check-circle {
+      background: var(--accent2);
+      border-color: var(--accent2);
+    }
+
+    .check-circle svg {
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .todo-item.done .check-circle svg { opacity: 1; }
+
+    .task-text {
+      flex: 1;
+      font-size: 0.95rem;
+      font-weight: 400;
+      line-height: 1.4;
+      color: var(--ink);
+      transition: color 0.2s;
+    }
+
+    .created-at {
+      font-size: 0.75rem;
+      color: #C0BAB0;
+      white-space: nowrap;
+    }
+
+    .delete-link {
+      color: #D0CAC0;
+      text-decoration: none;
+      font-size: 1rem;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+      line-height: 1;
+    }
+    .delete-link:hover { color: var(--danger); background: #FDF0EC; }
+
+    /* ── EMPTY STATE ── */
+    .empty {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 60px 0;
+      color: var(--muted);
+      animation: fadeUp 0.4s ease;
+    }
+
+    .empty-icon {
+      width: 56px; height: 56px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 1.6rem;
+    }
+
+    .empty h3 {
+      font-family: 'Clash Display', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .empty p { font-size: 0.88rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 0.78rem;
+      color: #C0BAB0;
+    }
+
+    footer span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .railway-badge {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <span class="brand-dot"></span>
+      TaskFlow
+    </div>
+    <div class="tagline">Your tasks. Clean &amp; simple.</div>
+
+    <div class="stats">
+      <div class="stat-pill">Total <strong>{{ total }}</strong></div>
+      <div class="stat-pill">Done <strong>{{ done_count }}</strong></div>
+      <div class="stat-pill">Pending <strong>{{ pending }}</strong></div>
+    </div>
+  </header>
+
+  <!-- Add form -->
+  <form class="add-form" action="/add" method="POST">
+    <input type="text" name="task" placeholder="What needs to be done?" required autocomplete="off" autofocus/>
+    <button class="add-btn" type="submit">+ Add</button>
+  </form>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <span class="section-label">Tasks</span>
+    {% if done_count > 0 %}
+    <a href="/clear-done" class="clear-btn">Clear completed ({{ done_count }})</a>
+    {% endif %}
+  </div>
+
+  <!-- Todo List -->
+  <div class="todo-list">
+    {% if todos %}
+      {% for todo in todos %}
+      <div class="todo-item {% if todo.done %}done{% endif %}"
+           style="animation-delay: {{ loop.index0 * 0.04 }}s">
+
+        <!-- Toggle checkbox -->
+        <a href="/toggle/{{ todo.id }}" class="toggle-link">
+          <div class="check-circle">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Task text -->
+        <span class="task-text">{{ todo.task }}</span>
+
+        <!-- Time -->
+        <span class="created-at">
+          {{ todo.created_at.strftime('%d %b') if todo.created_at else '' }}
+        </span>
+
+        <!-- Delete -->
+        <a href="/delete/{{ todo.id }}" class="delete-link" title="Delete">✕</a>
+
+      </div>
+      {% endfor %}
+
+    {% else %}
+      <div class="empty">
+        <div class="empty-icon">✓</div>
+        <h3>All clear!</h3>
+        <p>Add a task above to get started.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <footer>
+    <span>
+      Deployed on
+      <span class="railway-badge">🚂 buses----iRailway</span>
+      &nbsp;·&nbsp; Flask + PostgreSQL
+    </span>
+  </footer>
+
+</body>
+</html>
