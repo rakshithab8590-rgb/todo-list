@@ -9,8 +9,8 @@ app = Flask(__name__)
 def get_db():
     database_url = os.environ.get("DATABASE_URL")
 
-    # Railway gives postgres:// but psycopg2 needs postgresql://
-    if database_url.startswith("postgres://"):
+    # Fix Railway postgres URL
+    if database_url and database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
 
     conn = psycopg2.connect(
