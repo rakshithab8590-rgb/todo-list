@@ -5,12 +5,15 @@ from psycopg2.extras import RealDictCursor
 
 app = Flask(__name__)
 
+
 def get_db():
     conn = psycopg2.connect(
         os.environ.get("DATABASE_URL"),
-        cursor_factory=RealDictCursor
+        cursor_factory=RealDictCursor,
+        sslmode="require"
     )
     return conn
+
 
 # ─── CREATE TABLE IF NOT EXISTS (runs on startup) ─────────────────
 def init_db():
@@ -28,6 +31,12 @@ def init_db():
     cur.close()
     conn.close()
 
+
+# Run database initialization
+with app.app_context():
+    init_db()
+
+
 # ─── ROUTES ──────────────────────────────────────────────────────
 
 # Home - show all todos
@@ -44,8 +53,14 @@ def index():
     done_count = sum(1 for t in todos if t['done'])
     pending = total - done_count
 
-    return render_template("index.html", todos=todos, total=total,
-                           done_count=done_count, pending=pending)
+    return render_template(
+        "index.html",
+        todos=todos,
+        total=total,
+        done_count=done_count,
+        pending=pending
+    )
+
 
 # Add a new todo
 @app.route("/add", methods=["POST"])
@@ -60,6 +75,7 @@ def add():
         conn.close()
     return redirect(url_for("index"))
 
+
 # Toggle done/not done
 @app.route("/toggle/<int:todo_id>")
 def toggle(todo_id):
@@ -70,6 +86,7 @@ def toggle(todo_id):
     cur.close()
     conn.close()
     return redirect(url_for("index"))
+
 
 # Delete a todo
 @app.route("/delete/<int:todo_id>")
@@ -82,6 +99,7 @@ def delete(todo_id):
     conn.close()
     return redirect(url_for("index"))
 
+
 # Delete all completed todos
 @app.route("/clear-done")
 def clear_done():
@@ -93,8 +111,8 @@ def clear_done():
     conn.close()
     return redirect(url_for("index"))
 
+
 # ─── START ────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    init_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
