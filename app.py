@@ -5,9 +5,11 @@ from psycopg2.extras import RealDictCursor
 
 app = Flask(__name__)
 
-# ─── DB CONNECTION ────────────────────────────────────────────────
 def get_db():
-    conn = psycopg2.connect(os.environ.get("DATABASE_URL"), cursor_factory=RealDictCursor)
+    conn = psycopg2.connect(
+        os.environ.get("DATABASE_URL"),
+        cursor_factory=RealDictCursor
+    )
     return conn
 
 # ─── CREATE TABLE IF NOT EXISTS (runs on startup) ─────────────────
@@ -95,4 +97,4 @@ def clear_done():
 if __name__ == "__main__":
     init_db()
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=True)
